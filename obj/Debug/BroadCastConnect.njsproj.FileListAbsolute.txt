@@ -1,0 +1,2 @@
+C:\Users\Valentino\Desktop\projects\BroadCastConnect\obj\Debug\BroadCastConnect.njsprojAssemblyReference.cache
+C:\Users\Valentino\Desktop\projects\BroadCastConnect\bin\Microsoft.NodejsTools.WebRole.dll
