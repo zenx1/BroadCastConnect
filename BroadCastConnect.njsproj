@@ -31,6 +31,9 @@
     <Content Include="server.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="utils\messaging.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="views\css\main.css">
       <SubType>Code</SubType>
     </Content>

@@ -1,38 +1,27 @@
-'use strict';
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
-const WebSocket = require('ws');
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);
 const uuidv4 = require('uuid/v4');
+const messaging = require('./helpers/server.messaging.js')(server);
 
-const wss = new WebSocket.Server({ server });
 app.use(express.static('views'));
 
-var socketQueue = {};
-wss.on('connection', function connection(ws) {
-    ws.on('message', function (message) {
-        var messageObject;
-        try {
-            messageObject = JSON.parse(message);
-        } catch (ex) {
-            return;
-        }
-        if (messageObject.fromWebPage) {
-            var uuid = uuidv4();
-            socketQueue[uuid] = ws;
-            ws.send(JSON.stringify({ uuid: uuid }));
-        } else if (messageObject.fromMobileApp) {
-            if (!socketQueue[messageObject.uuid]) {
-                return;
-            }
-            socketQueue[messageObject.uuid].send(JSON.stringify({ url: messageObject.url }));
-            delete socketQueue[messageObject.uuid];
-        }
+messaging.on('getUuid', function (webPage) {
+    var uuid = uuidv4();
+
+    messaging.on(uuid, function (mobileApp, url) {
+        messaging.send(webPage, 'redirect', url);
+        messaging.remove(uuid);
     });
+
+    webPage.on('close', function close() {
+        messaging.remove(uuid);
+    });
+
+    messaging.send(webPage, 'uuid', uuid);
 });
 
-
 app.set('port', process.env.PORT || 1337);
-var server = server.listen(app.get('port'), function () {
+server.listen(app.get('port'), function () {
     console.log('Express server listening on port ' + server.address().port);
 });
