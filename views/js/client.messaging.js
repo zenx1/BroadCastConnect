@@ -1,3 +1,9 @@
+/* IMPORTANT
+ *
+ * Don't use features of ES6 and above as plenty of smart TVs
+ * use outdated browsers which don't support ES6 and above
+ */
+
 var clientMessaging = function (wsUrl) {
     var socket = new WebSocket(wsUrl);
 

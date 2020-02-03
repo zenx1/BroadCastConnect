@@ -4,9 +4,9 @@ module.exports = (server) => {
     const wss = new WebSocket.Server({ server });
     let callbacks = {};
 
-    wss.on('connection', function connection(ws) {
-        ws.on('message', function (message) {
-            var messageObject;
+    wss.on('connection', (ws) => {
+        ws.on('message', (message) => {
+            let messageObject;
             try {
                 messageObject = JSON.parse(message);
             } catch (ex) {

@@ -6,15 +6,15 @@ const messaging = require('./helpers/server.messaging.js')(server);
 
 app.use(express.static('views'));
 
-messaging.on('getUuid', function (webPage) {
-    var uuid = uuidv4();
+messaging.on('getUuid', (webPage) => {
+    const uuid = uuidv4();
 
-    messaging.on(uuid, function (mobileApp, url) {
+    messaging.on(uuid, (mobileApp, url) => {
         messaging.send(webPage, 'redirect', url);
         messaging.remove(uuid);
     });
 
-    webPage.on('close', function close() {
+    webPage.on('close', () => {
         messaging.remove(uuid);
     });
 
@@ -22,6 +22,6 @@ messaging.on('getUuid', function (webPage) {
 });
 
 app.set('port', process.env.PORT || 1337);
-server.listen(app.get('port'), function () {
+server.listen(app.get('port'), () => {
     console.log('Express server listening on port ' + server.address().port);
 });
