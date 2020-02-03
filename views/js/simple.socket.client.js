@@ -4,7 +4,7 @@
  * use outdated browsers which don't support ES6 and above
  */
 
-var clientMessaging = function (wsUrl) {
+var simpleSocketClient = function (wsUrl) {
     var socket = new WebSocket(wsUrl);
 
     var callbacks = {};
@@ -30,32 +30,32 @@ var clientMessaging = function (wsUrl) {
     })();
 
     socket.onmessage = function (event) {
-        var messageObject;
+        var data;
         try {
-            messageObject = JSON.parse(event.data);
+            data = JSON.parse(event.data);
         } catch (ex) {
             return;
         }
-        if (!messageObject.title || !callbacks[messageObject.title]) {
+        if (!data.name || !callbacks[data.name]) {
             return;
         }
-        callbacks[messageObject.title](messageObject.body);
+        callbacks[data.name](data.body);
     };
 
     return {
-        on: function (title, callback) {
-            callbacks[title] = callback;
+        on: function (name, callback) {
+            callbacks[name] = callback;
         },
-        send: function (title, body) {
+        send: function (name, body) {
             ensureSocketOpened(function () {
                 socket.send(JSON.stringify({
-                    title: title,
+                    name: name,
                     body: body
                 }));
             });
         },
-        remove: function (title) {
-            delete callbacks[title];
+        remove: function (name) {
+            delete callbacks[name];
         },
         onClose: function (callback) {
             socket.onclose = function (event) {

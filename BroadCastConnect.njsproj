@@ -31,7 +31,7 @@
     <Content Include="server.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Content Include="helpers\server.messaging.js">
+    <Content Include="helpers\simple.socket.server.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="views\css\main.css">
@@ -43,7 +43,7 @@
     <Content Include="views\js\connect.js">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="views\js\client.messaging.js">
+    <Content Include="views\js\simple.socket.client.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="views\js\qrcode.min.js" />

@@ -5,17 +5,17 @@
  */
 
 window.addEventListener('DOMContentLoaded', function (event) {
-    var wsUrl = 'ws://' + document.location.host;
-
-    var messaging = clientMessaging(wsUrl);
-
     var getQrSize = function () {
         var viewPortWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
         var viewPortHeight = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - document.getElementById('qrCode').offsetTop;
         return viewPortWidth < viewPortHeight ? viewPortWidth : viewPortHeight;
     };
 
-    messaging.on('uuid', function (uuid) {
+    var wsUrl = 'ws://' + document.location.host;
+
+    var simpleSocket = new simpleSocketClient(wsUrl);
+
+    simpleSocket.on('uuid', function (uuid) {
         var qrSize = getQrSize();
 
         QRCode.toCanvas(document.getElementById('qrCode'), JSON.stringify({
@@ -29,9 +29,20 @@ window.addEventListener('DOMContentLoaded', function (event) {
         });
     });
 
-    messaging.on('redirect', function (url) {
+    var isRedirecting = false;
+
+    simpleSocket.on('redirect', function (url) {
+        isRedirecting = true;
         window.location.href = url;
     });
 
-    messaging.send('getUuid');
+    simpleSocket.send('getUuid');
+
+    simpleSocket.onClose(function () {
+        if (isRedirecting) {
+            return;
+        }
+        document.getElementById('qrCode').style.display = 'none';
+        document.getElementById('instruction').textContent = 'Oops, something went wrong - please reload page and try again.';
+    });
 });

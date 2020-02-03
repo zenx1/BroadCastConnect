@@ -2,23 +2,22 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const uuidv4 = require('uuid/v4');
-const messaging = require('./helpers/server.messaging.js')(server);
+const simpleSocket = require('./helpers/simple.socket.server.js')(server);
 
 app.use(express.static('views'));
 
-messaging.on('getUuid', (webPage) => {
+simpleSocket.on('getUuid', (webPage) => {
     const uuid = uuidv4();
 
-    messaging.on(uuid, (mobileApp, url) => {
-        messaging.send(webPage, 'redirect', url);
-        messaging.remove(uuid);
+    simpleSocket.on(uuid, (mobileApp, url) => {
+        simpleSocket.send(webPage, 'redirect', url);
     });
 
     webPage.on('close', () => {
-        messaging.remove(uuid);
+        simpleSocket.remove(uuid);
     });
 
-    messaging.send(webPage, 'uuid', uuid);
+    simpleSocket.send(webPage, 'uuid', uuid);
 });
 
 app.set('port', process.env.PORT || 1337);
